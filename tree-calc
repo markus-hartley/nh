@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>North Haven Tree Stand Calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f0f4f8;
+            font-size: 18px;
+        }
+        .calculator {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: #34495e;
+            text-align: center;
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            font-weight: normal;
+            line-height: 1.4;
+        }
+        label {
+            display: block;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 1.3em;
+            color: #2c3e50;
+        }
+        select, input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1.2em;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            transition: border-color 0.3s ease;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .tree-inputs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        .tree-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .tree-input input {
+            width: 120px;
+            height: 80px;
+            text-align: center;
+            font-size: 2em;
+            border: 2px solid #bdc3c7;
+            background-color: #ffffff;
+        }
+        .tree-input input::-webkit-inner-spin-button,
+        .tree-input input::-webkit-outer-spin-button {
+            opacity: 1;
+            width: 40px;
+            height: 80px;
+            background-color: #ecf0f1;
+            border-left: 2px solid #bdc3c7;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+        .tree-input input::-webkit-inner-spin-button:hover,
+        .tree-input input::-webkit-outer-spin-button:hover {
+            background-color: #e0e6e8;
+        }
+        .points {
+            font-size: 1.1em;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+        .result {
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            padding: 30px;
+            margin-top: 40px;
+            text-align: center;
+            font-size: 1.6em;
+        }
+        .result.pass {
+            background-color: #d5f5e3;
+            color: #27ae60;
+        }
+        .result.fail {
+            background-color: #fadbd8;
+            color: #c0392b;
+        }
+        .total-points {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const TreeRatingCalculator = () => {
+            const [landType, setLandType] = React.useState('greatPond');
+            const [treeCount, setTreeCount] = React.useState({
+                small: 0,
+                medium: 0,
+                large: 0,
+                extraLarge: 0
+            });
+
+            const calculatePoints = () => {
+                return (
+                    treeCount.small * 1 +
+                    treeCount.medium * 2 +
+                    treeCount.large * 4 +
+                    treeCount.extraLarge * 8
+                );
+            };
+
+            const requiredPoints = landType === 'greatPond' ? 24 : 16;
+            const totalPoints = calculatePoints();
+
+            return (
+                <div className="calculator">
+                    <h1>North Haven Tree Stand Calculator</h1>
+                    <h2>Determine if trees in a 25 x 50 ft area meet requirements for a "well distributed stand of trees"</h2>
+                    <div>
+                        <label htmlFor="land-type">Land Type:</label>
+                        <select id="land-type" value={landType} onChange={(e) => setLandType(e.target.value)}>
+                            <option value="greatPond">Great Pond / River / Stream to Great Pond</option>
+                            <option value="other">Other Water Bodies / Tributary Streams / Wetlands</option>
+                        </select>
+                    </div>
+                    <div className="tree-inputs">
+                        <div className="tree-input">
+                            <label htmlFor="small-trees">Trees 2-4 inches in diameter:</label>
+                            <input 
+                                id="small-trees"
+                                type="number" 
+                                value={treeCount.small}
+                                onChange={(e) => setTreeCount({...treeCount, small: parseInt(e.target.value) || 0})}
+                            />
+                            <div className="points">1 point each</div>
+                        </div>
+                        <div className="tree-input">
+                            <label htmlFor="medium-trees">Trees 4-8 inches in diameter:</label>
+                            <input 
+                                id="medium-trees"
+                                type="number" 
+                                value={treeCount.medium}
+                                onChange={(e) => setTreeCount({...treeCount, medium: parseInt(e.target.value) || 0})}
+                            />
+                            <div className="points">2 points each</div>
+                        </div>
+                        <div className="tree-input">
+                            <label htmlFor="large-trees">Trees 8-12 inches in diameter:</label>
+                            <input 
+                                id="large-trees"
+                                type="number" 
+                                value={treeCount.large}
+                                onChange={(e) => setTreeCount({...treeCount, large: parseInt(e.target.value) || 0})}
+                            />
+                            <div className="points">4 points each</div>
+                        </div>
+                        <div className="tree-input">
+                            <label htmlFor="extra-large-trees">Trees 12+ inches in diameter:</label>
+                            <input 
+                                id="extra-large-trees"
+                                type="number" 
+                                value={treeCount.extraLarge}
+                                onChange={(e) => setTreeCount({...treeCount, extraLarge: parseInt(e.target.value) || 0})}
+                            />
+                            <div className="points">8 points each</div>
+                        </div>
+                    </div>
+                    <div className={`result ${totalPoints >= requiredPoints ? 'pass' : 'fail'}`}>
+                        <h2>Total Points:</h2>
+                        <div className="total-points">{totalPoints}</div>
+                        <p>
+                            {totalPoints >= requiredPoints 
+                                ? `Meets the required ${requiredPoints} points for this area.` 
+                                : `Does not meet the required ${requiredPoints} points for this area.`}
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
+        ReactDOM.render(<TreeRatingCalculator />, document.getElementById('root'));
+    </script>
+</body>
+</html>
